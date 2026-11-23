@@ -7,7 +7,7 @@
 | Axel Arturo Cruz Lima | 24656 |
 | Enya Ayleen Gálvez Hernández | 24693 |
 
-Aplicación en Python con interfaz gráfica (Tkinter) que encripta y desencripta mensajes de texto con RSA, muestra el proceso paso a paso y recupera **exactamente** el mensaje original (incluidos espacios iniciales, finales y consecutivos).
+Aplicación en Python con interfaz gráfica (Tkinter) y una **versión web publicada en GitHub Pages** (sin instalar nada) que encripta y desencripta mensajes de texto con RSA, muestra el proceso paso a paso y recupera **exactamente** el mensaje original (incluidos espacios iniciales, finales y consecutivos).
 
 ## Versión de Python y dependencias
 
@@ -15,7 +15,24 @@ Aplicación en Python con interfaz gráfica (Tkinter) que encripta y desencripta
 - **Solo se usa la biblioteca estándar.** No hay paquetes externos que instalar; `requirements.txt` solo lo indica con un comentario.
 - Recursos de la interfaz: `ui/public/Alice.png` y `ui/public/Bob.png` (imágenes de los usuarios en el canal). Deben permanecer en esa carpeta.
 
-## Instalación y ejecución
+## Versión web (sin instalar nada)
+
+**Enlace público:** https://turis0077.github.io/RSA-Cryptographic-System/
+
+Abra el enlace y use el chat (escriba en el teléfono de Alice o de Bob y pulse `>`) o las pestañas **Encriptar** y **Desencriptar**. No requiere usuario ni clave. La primera carga tarda unos segundos porque el navegador descarga el intérprete de Python.
+
+La versión web ejecuta **el mismo código Python** (`rsa_core/`) dentro del navegador con [Pyodide](https://pyodide.org); la página (`web/`) solo dibuja los resultados. Por eso es el mismo comportamiento que la aplicación de escritorio: mismas validaciones, mismos modos Ser Alice / Funcionamiento Real / Ser Bob y mismo panel de detalle.
+
+Para generarla localmente:
+
+```bash
+python build_web.py                          # crea la carpeta _site/
+python -m http.server 8000 --directory _site # abrir http://localhost:8000
+```
+
+Publicación: cada `push` a `main` ejecuta `.github/workflows/pages.yml`, que corre las pruebas, arma `_site/` y lo despliega en GitHub Pages (en el repositorio: Settings → Pages → Source: **GitHub Actions**).
+
+## Instalación y ejecución (aplicación de escritorio)
 
 No requiere instalación. Desde la carpeta del proyecto:
 
@@ -34,6 +51,9 @@ main.py            Arranque de la aplicación
 rsa_core/          Lógica RSA pura (no importa tkinter)
 ui/                Interfaz Tkinter (solo accede al núcleo mediante ui/servicio.py)
 ui/public/         Imágenes de Alice y Bob
+web/               Versión web: index.html, style.css, app.js y app_web.py (puente Python)
+build_web.py       Arma la carpeta _site/ que se publica en GitHub Pages
+.github/workflows/ Despliegue automático en GitHub Pages
 tests/             Pruebas, auditoría estática y guion de casos (casos_demo.md)
 ```
 
