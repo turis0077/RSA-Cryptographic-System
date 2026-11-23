@@ -65,7 +65,7 @@ def auditar_archivo(ruta: Path, carpeta: str) -> list[str]:
 
 def main() -> int:
     hallazgos = []
-    for carpeta in ("rsa_core", "ui"):
+    for carpeta in ("rsa_core", "ui", "web"):
         for ruta in sorted((RAIZ / carpeta).glob("*.py")):
             hallazgos += auditar_archivo(ruta, carpeta)
     if hallazgos:
