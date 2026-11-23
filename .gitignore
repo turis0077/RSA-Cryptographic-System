@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+_site/
+
+# Material de clase y archivos de entrega locales (no forman parte del repositorio)
+Docs/
+Grupo_No.3_Proyecto/
+*.zip
+*.mp4
+*.xlsx
