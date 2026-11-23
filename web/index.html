@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sistema criptográfico RSA — Alice ↔ Bob</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+</head>
+<body>
+  <div id="cargando" role="status">Cargando Python (Pyodide)… la primera vez puede tardar unos segundos.</div>
+
+  <header id="barra">
+    <button type="button" class="btn-modo" id="btn-alice">Ser Alice</button>
+    <button type="button" class="btn-modo activo" id="btn-real">Funcionamiento Real</button>
+    <button type="button" class="btn-modo" id="btn-bob">Ser Bob</button>
+  </header>
+
+  <main id="layout">
+    <section class="col" id="col-Alice"></section>
+
+    <section id="centro">
+      <div id="status"></div>
+
+      <div id="canal" aria-label="Canal público">
+        <div class="canal-titulo">Canal público</div>
+        <div class="linea" style="left:22%"></div>
+        <div class="linea" style="left:78%"></div>
+        <div class="avatar" style="left:10%"><img src="public/Alice.png" alt="Alice" width="60" height="60"><span>Alice</span></div>
+        <div class="avatar" style="left:90%"><img src="public/Bob.png" alt="Bob" width="60" height="60"><span>Bob</span></div>
+        <div id="canal-llave"></div>
+        <div id="canal-sobre" hidden></div>
+        <div id="canal-texto"></div>
+      </div>
+
+      <div class="tabs" id="tabs-form">
+        <div class="tabs-botones">
+          <button type="button" data-tab="enc" class="activo">Encriptar</button>
+          <button type="button" data-tab="des">Desencriptar</button>
+          <button type="button" data-tab="llaves">Llaves (chat)</button>
+        </div>
+
+        <form class="tab-panel" data-panel="enc" autocomplete="off">
+          <div class="campo" id="c-enc-M"><label for="enc-M">Mensaje M</label>
+            <textarea id="enc-M" rows="2" spellcheck="false"></textarea><small class="ayuda"></small></div>
+          <div class="fila">
+            <div class="campo" id="c-enc-p"><label for="enc-p">Primo p</label><input id="enc-p" spellcheck="false"><small class="ayuda"></small></div>
+            <div class="campo" id="c-enc-q"><label for="enc-q">Primo q</label><input id="enc-q" spellcheck="false"><small class="ayuda"></small></div>
+            <div class="campo" id="c-enc-e"><label for="enc-e">Exponente e</label><input id="enc-e" spellcheck="false"><small class="ayuda"></small></div>
+          </div>
+          <div class="msg-error" id="enc-msg"></div>
+          <button type="submit" class="accion">Encriptar</button>
+          <div class="salidas">
+            <label>C<input id="enc-out-C" readonly></label>
+            <div class="fila"><label>L<input id="enc-out-L" readonly></label>
+              <label>(e, n)<input id="enc-out-llave" readonly></label></div>
+          </div>
+        </form>
+
+        <form class="tab-panel" data-panel="des" autocomplete="off" hidden>
+          <div class="campo" id="c-des-C"><label for="des-C">Mensaje cifrado C</label>
+            <input id="des-C" spellcheck="false"><small class="ayuda"></small></div>
+          <div class="fila">
+            <div class="campo" id="c-des-L"><label for="des-L">Longitud L</label><input id="des-L" spellcheck="false"><small class="ayuda"></small></div>
+            <div class="campo" id="c-des-e"><label for="des-e">Exponente e</label><input id="des-e" spellcheck="false"><small class="ayuda"></small></div>
+          </div>
+          <div class="fila">
+            <div class="campo" id="c-des-p"><label for="des-p">Primo p</label><input id="des-p" spellcheck="false"><small class="ayuda"></small></div>
+            <div class="campo" id="c-des-q"><label for="des-q">Primo q</label><input id="des-q" spellcheck="false"><small class="ayuda"></small></div>
+          </div>
+          <div class="msg-error" id="des-msg"></div>
+          <button type="submit" class="accion">Desencriptar</button>
+          <div class="salidas">
+            <label>d<input id="des-out-d" readonly></label>
+            <label>M<input id="des-out-M" readonly></label>
+            <label>M entre comillas<input id="des-out-Mq" readonly></label>
+          </div>
+        </form>
+
+        <form class="tab-panel" data-panel="llaves" autocomplete="off" hidden>
+          <div class="campo"><label for="llaves-usuario">Usuario</label>
+            <select id="llaves-usuario"><option>Alice</option><option>Bob</option></select></div>
+          <div class="fila">
+            <div class="campo" id="c-llaves-p"><label for="llaves-p">Primo p</label><input id="llaves-p" spellcheck="false"><small class="ayuda"></small></div>
+            <div class="campo" id="c-llaves-q"><label for="llaves-q">Primo q</label><input id="llaves-q" spellcheck="false"><small class="ayuda"></small></div>
+            <div class="campo" id="c-llaves-e"><label for="llaves-e">Exponente e</label><input id="llaves-e" spellcheck="false"><small class="ayuda"></small></div>
+          </div>
+          <div class="msg-error" id="llaves-msg"></div>
+          <div class="msg-ok" id="llaves-ok"></div>
+          <button type="submit" class="accion">Actualizar llaves</button>
+        </form>
+      </div>
+
+      <div class="tabs" id="tabs-detalle">
+        <div class="tabs-botones">
+          <button type="button" data-tab="enc" class="activo">Detalle de encriptación</button>
+          <button type="button" data-tab="des">Detalle de desencriptación</button>
+        </div>
+        <div class="tab-panel detalle" data-panel="enc"></div>
+        <div class="tab-panel detalle" data-panel="des" hidden></div>
+      </div>
+    </section>
+
+    <section class="col" id="col-Bob"></section>
+  </main>
+
+  <div id="modal" hidden>
+    <div class="modal-caja" role="dialog" aria-modal="true">
+      <p id="modal-texto"></p>
+      <button type="button" class="accion" id="modal-boton">Siguiente →</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
