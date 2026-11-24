@@ -82,13 +82,14 @@ const canal = {
     const [ini, fin] = hacia === "Bob" ? [22, 78] : [78, 22];
     caja.hidden = false;
     const dur = 800, t0 = performance.now();
+    // Basada en el tiempo transcurrido y en setTimeout (no se detiene si la pestaña pasa a segundo plano).
     await new Promise((res) => {
-      const paso = (ahora) => {
-        const f = Math.min((ahora - t0) / dur, 1);
+      const paso = () => {
+        const f = Math.min((performance.now() - t0) / dur, 1);
         caja.style.left = ini + (fin - ini) * f + "%";
-        f < 1 ? requestAnimationFrame(paso) : res();
+        f < 1 ? setTimeout(paso, 30) : res();
       };
-      requestAnimationFrame(paso);
+      paso();
     });
     caja.hidden = true;
   },

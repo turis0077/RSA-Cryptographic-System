@@ -1,7 +1,9 @@
 """Arma la carpeta _site/ que se publica en GitHub Pages.
 
-Copia la página (web/), los módulos Python que Pyodide cargará en el navegador
-(rsa_core/, ui/adaptadores.py, ui/textos.py y web/app_web.py) y las imágenes.
+La raíz del sitio es una página de bienvenida que muestra el README con un botón
+para abrir el programa, que queda en app/. Copia la página (web/), los módulos Python
+que Pyodide cargará en el navegador (rsa_core/, ui/adaptadores.py, ui/textos.py y
+web/app_web.py) y las imágenes.
 Uso:  python build_web.py
 """
 import json
@@ -10,7 +12,8 @@ from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent
 SITIO = RAIZ / "_site"
-PY = SITIO / "py"
+APP = SITIO / "app"
+PY = APP / "py"
 
 if SITIO.exists():
     shutil.rmtree(SITIO)
@@ -18,8 +21,10 @@ PY.mkdir(parents=True)
 
 # Página
 for nombre in ("index.html", "style.css", "app.js"):
-    shutil.copy(RAIZ / "web" / nombre, SITIO / nombre)
-shutil.copytree(RAIZ / "ui" / "public", SITIO / "public")
+    shutil.copy(RAIZ / "web" / nombre, APP / nombre)
+shutil.copytree(RAIZ / "ui" / "public", APP / "public")
+shutil.copy(RAIZ / "web" / "landing.html", SITIO / "index.html")
+shutil.copy(RAIZ / "README.md", SITIO / "README.md")
 (SITIO / ".nojekyll").write_text("", encoding="utf-8")
 
 # Módulos Python que se ejecutan en el navegador (sin tkinter)

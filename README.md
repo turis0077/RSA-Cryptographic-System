@@ -19,6 +19,8 @@ Aplicación en Python con interfaz gráfica (Tkinter) y una **versión web publi
 
 **Enlace público:** https://turis0077.github.io/RSA-Cryptographic-System/
 
+La página principal muestra esta documentación con el botón **Abrir el programa**. También se puede entrar directo al programa en `/app/` (https://turis0077.github.io/RSA-Cryptographic-System/app/).
+
 Abra el enlace y use el chat (escriba en el teléfono de Alice o de Bob y pulse `>`) o las pestañas **Encriptar** y **Desencriptar**. No requiere usuario ni clave. La primera carga tarda unos segundos porque el navegador descarga el intérprete de Python.
 
 La versión web ejecuta **el mismo código Python** (`rsa_core/`) dentro del navegador con [Pyodide](https://pyodide.org); la página (`web/`) solo dibuja los resultados. Por eso es el mismo comportamiento que la aplicación de escritorio: mismas validaciones, mismos modos Ser Alice / Funcionamiento Real / Ser Bob y mismo panel de detalle.
@@ -27,7 +29,7 @@ Para generarla localmente:
 
 ```bash
 python build_web.py                          # crea la carpeta _site/
-python -m http.server 8000 --directory _site # abrir http://localhost:8000
+python -m http.server 8000 --directory _site # abrir http://localhost:8000 (programa en /app/)
 ```
 
 Publicación: cada `push` a `main` ejecuta `.github/workflows/pages.yml`, que corre las pruebas, arma `_site/` y lo despliega en GitHub Pages (en el repositorio: Settings → Pages → Source: **GitHub Actions**).
