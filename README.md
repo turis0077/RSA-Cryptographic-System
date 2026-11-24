@@ -13,6 +13,7 @@ Aplicación en Python con interfaz gráfica (Tkinter) y una **versión web publi
 
 - Python **3.12.x** recomendado (mínimo 3.10; también probado con 3.13). Tkinter con Tcl/Tk 8.6.
 - **Solo se usa la biblioteca estándar.** No hay paquetes externos que instalar; `requirements.txt` solo lo indica con un comentario.
+- La versión web no requiere instalar nada, pero **necesita conexión a internet**: el navegador descarga Pyodide (intérprete de Python, versión 0.26.4, con Python 3.12) y, en la portada, la librería `marked` para mostrar este README, ambos desde jsDelivr. Estas son librerías del navegador, no dependencias del proyecto en Python.
 - Recursos de la interfaz: `ui/public/Alice.png` y `ui/public/Bob.png` (imágenes de los usuarios en el canal). Deben permanecer en esa carpeta.
 
 ## Versión web (sin instalar nada)
@@ -23,16 +24,18 @@ La página principal muestra esta documentación con el botón **Abrir el progra
 
 Abra el enlace y use el chat (escriba en el teléfono de Alice o de Bob y pulse `>`) o las pestañas **Encriptar** y **Desencriptar**. No requiere usuario ni clave. La primera carga tarda unos segundos porque el navegador descarga el intérprete de Python.
 
+No requiere usuario ni clave: basta abrir el enlace. Si la portada solo muestra texto sin el botón, recargue la página; el programa también abre directo en `/app/`.
+
 La versión web ejecuta **el mismo código Python** (`rsa_core/`) dentro del navegador con [Pyodide](https://pyodide.org); la página (`web/`) solo dibuja los resultados. Por eso es el mismo comportamiento que la aplicación de escritorio: mismas validaciones, mismos modos Ser Alice / Funcionamiento Real / Ser Bob y mismo panel de detalle.
 
 Para generarla localmente:
 
 ```bash
-python build_web.py                          # crea la carpeta _site/
+python build_web.py                          # crea _site/ (portada en /, programa en /app/)
 python -m http.server 8000 --directory _site # abrir http://localhost:8000 (programa en /app/)
 ```
 
-Publicación: cada `push` a `main` ejecuta `.github/workflows/pages.yml`, que corre las pruebas, arma `_site/` y lo despliega en GitHub Pages (en el repositorio: Settings → Pages → Source: **GitHub Actions**).
+Publicación: cada `push` a `main` ejecuta `.github/workflows/pages.yml`, que corre las pruebas, arma `_site/` y lo despliega en GitHub Pages. Requiere en el repositorio: Settings → Pages → Source: **GitHub Actions** (con «Deploy from a branch» solo se vería el README, sin el programa).
 
 ## Instalación y ejecución (aplicación de escritorio)
 
@@ -53,7 +56,7 @@ main.py            Arranque de la aplicación
 rsa_core/          Lógica RSA pura (no importa tkinter)
 ui/                Interfaz Tkinter (solo accede al núcleo mediante ui/servicio.py)
 ui/public/         Imágenes de Alice y Bob
-web/               Versión web: index.html, style.css, app.js y app_web.py (puente Python)
+web/               Versión web: landing.html (portada con este README), index.html, style.css, app.js (programa) y app_web.py (puente Python)
 build_web.py       Arma la carpeta _site/ que se publica en GitHub Pages
 .github/workflows/ Despliegue automático en GitHub Pages
 tests/             Pruebas, auditoría estática y guion de casos (casos_demo.md)
@@ -209,15 +212,17 @@ Un dato inválido muestra un mensaje en español, resalta el campo y nunca cierr
 
 ## Comprobaciones realizadas
 
-- **Pruebas automáticas** (`python -m unittest discover -s tests -v`): 29 pruebas.
+- **Pruebas automáticas** (`python -m unittest discover -s tests -v`): 35 pruebas.
   - Ida y vuelta exacta de 10 mensajes: longitud par e impar, mayúsculas y minúsculas, números y signos, espacios consecutivos, espacios al inicio y al final, el bloque máximo `~~`, y la llave de Alice.
   - Ceros iniciales en bloques cifrados (por ejemplo `"Hola"` → `028621`, `"Hola Bob"` con la llave de Alice → `007472`, `"~~"` → `051700`).
   - Ida y vuelta exhaustiva de las 95 × 95 parejas ASCII imprimibles.
   - Algoritmos comparados con oráculos independientes (MCD ingenuo, `d` verificado con `(e·d) mod φ = 1` en 1000 pares coprimos).
   - Rechazo de parámetros inválidos (incluido `p = 10^30` sin bloqueo), caracteres no admitidos, bloques mal formados, `c ≥ n`, longitudes inconsistentes y relleno no válido.
   - Encapsulación de `UsuarioRSA` y flujo Alice ↔ Bob.
+  - Puente de la versión web (`tests/test_web.py`): resultados en JSON, campos resaltados por error, espacios del chat y visibilidad del detalle según los modos.
 - **Auditoría estática** (`python tests/auditar_restricciones.py`): sin imports, llamadas ni patrones prohibidos, y sin que el núcleo importe `tkinter`.
-- **Pruebas manuales de la interfaz:** chat, modos, formularios y errores, guiadas por `tests/casos_demo.md`.
+- **Pruebas manuales de la interfaz** (escritorio y web): chat, modos, formularios y errores, guiadas por `tests/casos_demo.md`.
+- **Pruebas de la versión web en el navegador:** casos de éxito y de error de encriptación y desencriptación, chat en ambos sentidos, matriz de visibilidad de los modos, paneles internos, cambio de llaves, bloqueo durante la animación y diseño en pantalla de escritorio y de teléfono.
 
 ## Video demostrativo
 [Enlace Al video](https://drive.google.com/drive/folders/1pER3JzLFQ-zxI0gja3vUSrJW59eO3isC?usp=sharing)
