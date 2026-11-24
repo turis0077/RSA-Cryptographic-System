@@ -18,9 +18,9 @@ Aplicación en Python con interfaz gráfica (Tkinter) y una **versión web publi
 
 ## Versión web (sin instalar nada)
 
-**Enlace público:** https://turis0077.github.io/RSA-Cryptographic-System/
+**Enlace público:** http://softport.me/RSA-Cryptographic-System/
 
-La página principal muestra esta documentación con el botón **Abrir el programa**. También se puede entrar directo al programa en `/app/` (https://turis0077.github.io/RSA-Cryptographic-System/app/).
+La página principal muestra esta documentación con el botón **Abrir el programa**. También se puede entrar directo al programa en `/app/` (http://softport.me/RSA-Cryptographic-System/app/).
 
 Abra el enlace y use el chat (escriba en el teléfono de Alice o de Bob y pulse `>`) o las pestañas **Encriptar** y **Desencriptar**. No requiere usuario ni clave. La primera carga tarda unos segundos porque el navegador descarga el intérprete de Python.
 
